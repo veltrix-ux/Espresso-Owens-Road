@@ -153,6 +153,32 @@ h1,h2,h3,h4{ font-family:var(--serif); font-weight:500; margin:0; letter-spacing
 .mobile-menu .mm-cta{ margin-top:12px; align-self:flex-start; border:1px solid var(--line-lit); padding:14px 28px; font-family:var(--sans); font-size:14px; letter-spacing:.08em; border-radius:2px; }
 
 /* ============================================================
+   FULL MENU OVERLAY
+   ============================================================ */
+.full-menu{
+  position:fixed; inset:0; z-index:150; background:var(--ink);
+  opacity:0; pointer-events:none; transition:opacity .4s var(--ease);
+  overflow-y:auto;
+}
+.full-menu.open{ opacity:1; pointer-events:auto; }
+.full-menu-inner{ max-width:900px; margin:0 auto; padding:100px 6vw 120px; }
+.full-menu-close{
+  position:fixed; top:26px; right:6vw; z-index:151; background:none; border:1px solid var(--line-lit);
+  color:var(--cream); width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  transition:all .3s var(--ease);
+}
+.full-menu-close:hover{ background:var(--copper); border-color:var(--copper); color:var(--ink); }
+.full-menu-close svg{ width:18px; height:18px; }
+.full-menu-title{ font-family:var(--serif); font-size:clamp(32px,5vw,48px); margin-bottom:8px; }
+.full-menu-sub{ color:var(--cream-faint); font-size:13.5px; letter-spacing:.03em; margin-bottom:64px; }
+.fm-section-title{ font-family:var(--serif); font-size:24px; color:var(--copper-lit); margin:56px 0 22px; }
+.fm-section-title:first-of-type{ margin-top:0; }
+@media (max-width:700px){
+  .full-menu-inner{ padding:90px 24px 100px; }
+  .full-menu-close{ right:24px; top:20px; }
+}
+
+/* ============================================================
    HERO
    ============================================================ */
 .hero{
@@ -249,7 +275,7 @@ section{ position:relative; }
 .menu-section{ padding:60px 0 160px; background:var(--ink); }
 .menu-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:64px; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:40px; }
 .menu-head h2{ font-size:clamp(38px,5.5vw,58px); }
-.menu-tabs{ display:flex; gap:10px; }
+.menu-tabs{ display:flex; gap:10px; flex-wrap:wrap; }
 .menu-tab{
   padding:11px 22px; border:1px solid var(--line-lit); border-radius:2px; background:transparent; color:var(--cream-dim);
   font-size:13px; letter-spacing:.06em; transition:all .3s var(--ease);
@@ -490,6 +516,17 @@ footer{ background:#070604; padding:90px 0 34px; border-top:1px solid var(--line
   <a class="mm-cta" href="#find">VISIT US</a>
 </div>
 
+<div class="full-menu" id="fullMenu">
+  <button class="full-menu-close" id="fullMenuClose" aria-label="Close full menu">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <div class="full-menu-inner">
+    <div class="full-menu-title">The Full Menu</div>
+    <div class="full-menu-sub">All-day menu · kitchen closes daily at 2pm · please order and pay at the counter</div>
+    <div id="fullMenuContent"></div>
+  </div>
+</div>
+
 <!-- ============================================================ HERO ============================================================ -->
 <section class="hero" id="top">
   <span class="hero-watermark" aria-hidden="true">E</span>
@@ -543,21 +580,27 @@ footer{ background:#070604; padding:90px 0 34px; border-top:1px solid var(--line
       <h2>What we're pouring<br>&amp; plating.</h2>
       <div class="menu-tabs" role="tablist">
         <button class="menu-tab active" data-tab="coffee">Coffee</button>
-        <button class="menu-tab" data-tab="brunch">Breakfast &amp; Brunch</button>
+        <button class="menu-tab" data-tab="savoury">Savoury &amp; All Day</button>
+        <button class="menu-tab" data-tab="sweet">Sweet &amp; Breakfast</button>
       </div>
     </div>
+    <p style="margin:-40px 0 56px; font-size:13.5px; color:var(--cream-faint); letter-spacing:.03em;">All-day menu · kitchen closes daily at 2pm · please order and pay at the counter</p>
 
     <div class="menu-panels">
       <div class="menu-panel active" id="panel-coffee">
         <div class="menu-list" id="list-coffee"></div>
       </div>
-      <div class="menu-panel" id="panel-brunch">
-        <div class="menu-list" id="list-brunch"></div>
+      <div class="menu-panel" id="panel-savoury">
+        <div class="menu-list" id="list-savoury"></div>
+        <div id="sidesBlock" style="margin-top:44px; padding-top:32px; border-top:1px solid var(--line);"></div>
+      </div>
+      <div class="menu-panel" id="panel-sweet">
+        <div class="menu-list" id="list-sweet"></div>
       </div>
     </div>
 
     <div class="menu-foot reveal">
-      <a href="#find" class="btn btn-outline">VIEW FULL MENU</a>
+      <button class="btn btn-outline" id="viewFullMenuBtn">VIEW FULL MENU</button>
     </div>
   </div>
 </section>
@@ -580,9 +623,9 @@ footer{ background:#070604; padding:90px 0 34px; border-top:1px solid var(--line
     </svg>
   </div>
   <div class="dish-copy reveal">
-    <div class="tag">Signature dish</div>
-    <h2>The corn fritter stack</h2>
-    <p>Comforting, generous, and made for slow mornings.</p>
+    <div class="tag">Signature dish · $22.50</div>
+    <h2>The corn fritters stack</h2>
+    <p>Bacon, fresh tomato, baby spinach and a fried egg, with house salsa, honey mustard vinaigrette and sweet chilli.</p>
     <a href="#menu" class="dish-link">EXPLORE THE MENU
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
@@ -605,9 +648,9 @@ footer{ background:#070604; padding:90px 0 34px; border-top:1px solid var(--line
     </svg>
   </div>
   <div class="dish-copy reveal">
-    <div class="tag">Also loved here</div>
-    <h2>Lemon soufflé pancakes</h2>
-    <p>Light, citrus-bright, and the kind of order regulars repeat.</p>
+    <div class="tag">Also loved here · $20.00</div>
+    <h2>Lemon soufflé pancake</h2>
+    <p>Blueberry compote, mascarpone, fresh orange, raspberry coulis and maple syrup.</p>
     <a href="#menu" class="dish-link">EXPLORE THE MENU
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
@@ -796,12 +839,39 @@ const CONFIG = {
       { name: "Long Black", note: "Double shot over hot water.", price: "Ask in store" },
       { name: "Latte", note: "Smooth, milky, mellow.", price: "Ask in store" }
     ],
-    brunch: [
-      { name: "Corn Fritter Stack", note: "Our signature — comforting and generous.", price: "Ask in store" },
-      { name: "Eggs Benedict", note: "A brunch classic, done right.", price: "Ask in store" },
-      { name: "Lemon Soufflé Pancakes", note: "Light, citrus-bright, and much loved.", price: "Ask in store" },
-      { name: "Fried Egg", note: "Simple, done well.", price: "Ask in store" },
-      { name: "Seasonal Breakfast Dish", note: "Ask staff what's on today.", price: "Ask in store" }
+    savoury: [
+      { name: "Corn Fritters Stack", note: "With bacon, fresh tomato, baby spinach and fried egg. Served with house salsa, honey mustard vinaigrette and sweet chilli sauce.", price: "$22.50" },
+      { name: "Espresso Owens Rd Grill", note: "Poached, scrambled or fried egg with bacon, sausage, house hash cake, grilled tomato, mushroom and toasted five grain.", price: "$27.00" },
+      { name: "Steak Sandwich (Marinated Rump)", note: "Rocket salad, sautéed gourmet potato and capsicum, caramelised onion, vine tomato, honey mustard vinaigrette and aioli on focaccia.", price: "$23.50" },
+      { name: "Frittata Sandwich (v)", note: "Rocket salad, spring onion, ricotta cheese omelette, house hash cake, ciabatta, honey mustard vinaigrette and chutney.", price: "$23.00" },
+      { name: "Owens Rd Mince on Toast", note: "Sautéed beef mince, potatoes and carrots, served with poached egg and toasted sourdough.", price: "$22.00" },
+      { name: "Moroccan Lamb Salad", note: "Roasted pumpkin, vine tomato, avocado, mixed green salad and honey mustard vinaigrette.", price: "$24.00" },
+      { name: "Healthy Choice Salmon Salad", note: "Iceberg, boiled eggs, gourmet potato, vine tomatoes, olives, green beans and baby spinach.", price: "$24.00" },
+      { name: "Chicken Salad & Grilled Haloumi", note: "Israeli couscous, cucumber, vine tomato, mixed green salad and sundried tomato vinaigrette.", price: "$23.00" },
+      { name: "Signature Caesar Salad (No Anchovy)", note: "Baby cos lettuce, bacon, toasted croutons, poached egg, parmesan and aioli.", price: "$21.50" }
+    ],
+    sweet: [
+      { name: "Lemon Soufflé Pancake", note: "With blueberry compote, mascarpone cheese, fresh orange, raspberry coulis and maple syrup.", price: "$20.00" },
+      { name: "French Toast (Brioche)", note: "Grilled banana, bacon, fresh fruits, raspberry coulis and maple syrup.", price: "$21.50" },
+      { name: "Eggs Benedict (Focaccia, Plain)", note: "Choice of ham, bacon, spinach or mushroom +$23.00, or smoked salmon +$24.00.", price: "from $17.00" },
+      { name: "Smoked Salmon Bruschetta", note: "Avocado, rocket salad, honey mustard vinaigrette on ciabatta, topped with fresh lemon zest.", price: "$24.00" },
+      { name: "Open Omelette", note: "Choice of ham, bacon, chorizo, smoked salmon, mushroom or spinach, with gourmet potato, cheese, rocket and chutney.", price: "$23.50" },
+      { name: "Breakfast Bruschetta (v)", note: "Scrambled eggs, toasted ciabatta, pesto, sautéed capsicum, baby spinach, vine tomato and feta.", price: "$20.50" },
+      { name: "Toasted Muesli (v)", note: "With fresh fruits, yoghurt and honey.", price: "$20.00" },
+      { name: "Seasonal Fruit Salad (v)", note: "With yoghurt and honey.", price: "$18.50" },
+      { name: "Quick Oats Porridge (v)", note: "With poached pears in orange juice and brown sugar, or plum compote.", price: "$17.00" },
+      { name: "Hot Croissants x2 (v)", note: "With cream cheese, jam or lemon curd.", price: "$11.50" },
+      { name: "Free Range Eggs on Toast (v)", note: "Choice of poached, scrambled or fried.", price: "$16.00" },
+      { name: "Toast (v)", note: "With jam, vegemite, marmalade, lemon curd, peanut butter or nutella. Bagel or gluten free +$1.00.", price: "$8.00" }
+    ]
+  },
+  sides: {
+    regular: ["Streaky Bacon","Sausages","Champagne Ham","Gourmet Potatoes / Hash Cake","Mushrooms (roasted, sautéed)","Roasted / Fresh Tomatoes","Spinach (sautéed)","Avocado"],
+    regularPrice: "$6.00",
+    extras: [
+      { name: "Smoked Salmon (side)", price: "$9.50" },
+      { name: "Side Salad", price: "$8.50" },
+      { name: "Extra Sauces / Spreads", price: "$1.00" }
     ]
   },
   // Fill in real hours once confirmed — leave blank to show the fallback note only.
@@ -830,7 +900,74 @@ function renderMenu(listId, items){
   `).join("");
 }
 renderMenu("list-coffee", CONFIG.menu.coffee);
-renderMenu("list-brunch", CONFIG.menu.brunch);
+renderMenu("list-savoury", CONFIG.menu.savoury);
+renderMenu("list-sweet", CONFIG.menu.sweet);
+
+/* ---------- render sides ---------- */
+(function renderSides(){
+  const el = document.getElementById("sidesBlock");
+  const regularHtml = CONFIG.sides.regular.map(s => `<span style="display:inline-block; margin:0 18px 10px 0; color:var(--cream-dim); font-size:14.5px;">${s}</span>`).join("");
+  const extrasHtml = CONFIG.sides.extras.map(e => `
+    <div class="menu-item" style="padding:16px 0;">
+      <div class="mi-left"><div class="mi-name" style="font-size:17px;">${e.name}</div></div>
+      <div class="mi-price">${e.price}</div>
+    </div>
+  `).join("");
+  el.innerHTML = `
+    <h3 style="font-family:var(--sans); font-size:14px; letter-spacing:.08em; color:var(--cream-faint); margin-bottom:16px;">SIDES · ${CONFIG.sides.regularPrice} EACH</h3>
+    <div style="margin-bottom:20px;">${regularHtml}</div>
+    ${extrasHtml}
+  `;
+})();
+
+/* ---------- render full menu overlay ---------- */
+function menuItemsHtml(items){
+  return items.map(i => `
+    <div class="menu-item">
+      <div class="mi-left">
+        <div class="mi-name">${i.name}</div>
+        <div class="mi-note">${i.note}</div>
+      </div>
+      <div class="mi-price">${i.price}</div>
+    </div>
+  `).join("");
+}
+(function buildFullMenu(){
+  const el = document.getElementById("fullMenuContent");
+  const regularSidesHtml = CONFIG.sides.regular.map(s => `<span style="display:inline-block; margin:0 18px 10px 0; color:var(--cream-dim); font-size:14.5px;">${s}</span>`).join("");
+  const extraSidesHtml = CONFIG.sides.extras.map(e => `
+    <div class="menu-item" style="padding:16px 0;">
+      <div class="mi-left"><div class="mi-name" style="font-size:17px;">${e.name}</div></div>
+      <div class="mi-price">${e.price}</div>
+    </div>
+  `).join("");
+  el.innerHTML = `
+    <div class="fm-section-title">Coffee</div>
+    <div class="menu-list" style="display:block;">${menuItemsHtml(CONFIG.menu.coffee)}</div>
+
+    <div class="fm-section-title">Savoury &amp; All Day</div>
+    <div class="menu-list" style="display:block;">${menuItemsHtml(CONFIG.menu.savoury)}</div>
+
+    <div class="fm-section-title">Sides</div>
+    <p style="font-size:13px; letter-spacing:.08em; color:var(--cream-faint); margin-bottom:16px;">SIDES · ${CONFIG.sides.regularPrice} EACH</p>
+    <div style="margin-bottom:12px;">${regularSidesHtml}</div>
+    ${extraSidesHtml}
+
+    <div class="fm-section-title">Sweet &amp; Breakfast</div>
+    <div class="menu-list" style="display:block;">${menuItemsHtml(CONFIG.menu.sweet)}</div>
+  `;
+})();
+
+const fullMenu = document.getElementById("fullMenu");
+document.getElementById("viewFullMenuBtn").addEventListener("click", () => {
+  fullMenu.classList.add("open");
+  document.body.style.overflow = "hidden";
+});
+document.getElementById("fullMenuClose").addEventListener("click", () => {
+  fullMenu.classList.remove("open");
+  document.body.style.overflow = "";
+});
+document.addEventListener("keydown", (e) => { if(e.key === "Escape") { fullMenu.classList.remove("open"); document.body.style.overflow = ""; } });
 
 /* ---------- render hours ---------- */
 (function renderHours(){
