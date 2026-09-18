@@ -69,7 +69,7 @@
 :root[data-theme="dark"]{ }
 
 *{ box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
+html{ scroll-behavior:smooth; background:var(--ink); }
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior:auto; }
   *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
@@ -158,7 +158,7 @@ h1,h2,h3,h4{ font-family:var(--serif); font-weight:500; margin:0; letter-spacing
 .full-menu{
   position:fixed; inset:0; z-index:150; background:var(--ink);
   opacity:0; pointer-events:none; transition:opacity .4s var(--ease);
-  overflow-y:auto;
+  overflow-y:auto; overscroll-behavior:contain;
 }
 .full-menu.open{ opacity:1; pointer-events:auto; }
 .full-menu-inner{ max-width:900px; margin:0 auto; padding:100px 6vw 120px; }
@@ -228,6 +228,13 @@ h1,h2,h3,h4{ font-family:var(--serif); font-weight:500; margin:0; letter-spacing
 .btn-solid:hover{ background:var(--copper-lit); transform:translateY(-2px); }
 .btn-outline{ border:1px solid var(--line-lit); color:var(--cream); }
 .btn-outline:hover{ border-color:var(--copper-lit); color:var(--copper-lit); background:rgba(176,96,47,.08); }
+.btn-plain{
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid rgba(239,231,216,0.35); border-radius:0; padding:18px 46px;
+  background:transparent; color:var(--cream); font-size:13px; letter-spacing:.14em; font-weight:500;
+  font-family:var(--sans); transition:all .3s var(--ease);
+}
+.btn-plain:hover{ border-color:var(--cream); background:rgba(239,231,216,0.05); }
 
 .hero-scroll{
   position:absolute; bottom:28px; left:6vw; display:flex; align-items:center; gap:12px; color:var(--cream-faint); font-size:11px; letter-spacing:.14em; z-index:2;
@@ -600,7 +607,7 @@ footer{ background:#070604; padding:90px 0 34px; border-top:1px solid var(--line
     </div>
 
     <div class="menu-foot reveal">
-      <button class="btn btn-outline" id="viewFullMenuBtn">VIEW FULL MENU</button>
+      <button class="btn-plain" id="viewFullMenuBtn">VIEW FULL MENU</button>
     </div>
   </div>
 </section>
